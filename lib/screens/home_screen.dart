@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'report_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -77,13 +78,29 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               
-              _buildActionCard(
+             /* _buildActionCard(
                 color: const Color(0xFFFF6D3B),
                 title: 'REPORTAR PESCA\nILEGAL',
                 subtitle: 'Captura foto y envía',
                 icon: Icons.emergency,
                 actionIcon: Icons.camera_alt_outlined,
               ),
+            */
+              GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ReportDniScreen()),
+                );
+              },
+              child: _buildActionCard(
+                color: const Color(0xFFFF6D3B),
+                title: 'REPORTAR PESCA\nILEGAL',
+                subtitle: 'Captura foto y envía',
+                icon: Icons.emergency,
+                actionIcon: Icons.camera_alt_outlined,
+              ),
+            ),
 
               const SizedBox(height: 16),
 
@@ -164,7 +181,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20), // Espacio para scrolear
+              const SizedBox(height: 20), 
             ],
           ),
         ),
@@ -216,9 +233,7 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(28),
-        /*boxShadow: [
-          BoxShadow(color: color, blurRadius: 15, offset: const Offset(0, 8)),
-        ],*/
+
       ),
       child: Stack(
         children: [
