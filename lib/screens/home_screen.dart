@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'report_screen.dart';
+import '../backend/debug_reports_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -21,7 +22,7 @@ class HomeScreen extends StatelessWidget {
                   
                   const Row(
                     children: [
-                      Icon(Icons.waves, color: Color(0xFFFF6D3B), size: 28), // Icono olas naranja
+                      Icon(Icons.waves, color: Color(0xFFFF6D3B), size: 28), 
                       SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,15 +70,21 @@ class HomeScreen extends StatelessWidget {
               
               const SizedBox(height: 30),
 
-              
-              const Text(
-                'Hola, Pescador',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: Color(0xFF1A1A1A)),
+              GestureDetector(
+                onLongPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const DebugReportsScreen()),
+                  );
+                },
+                child: const Text(
+                  'Hola, Pescador ⛵',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: Color(0xFF1A1A1A)),
+                ),
               ),
 
               const SizedBox(height: 20),
 
-              
              /* _buildActionCard(
                 color: const Color(0xFFFF6D3B),
                 title: 'REPORTAR PESCA\nILEGAL',

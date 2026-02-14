@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'camera_capture_screen.dart';
+import '../backend/basedato_helper.dart';
 
 class ReportDniScreen extends StatefulWidget {
   const ReportDniScreen({super.key});
@@ -51,7 +53,6 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      // GestureDetector para detectar toques fuera del teclado y cerrarlo
       body: GestureDetector(
         onTap: () {
           setState(() {
@@ -60,7 +61,7 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
         },
         child: Column(
           children: [
-            // --- HEADER (Igual que antes) ---
+            
             Container(
               padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
               color: const Color(0xFF009688),
@@ -101,7 +102,6 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
               ),
             ),
 
-            // --- CONTENIDO SCROLLEABLE ---
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
@@ -121,12 +121,9 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
                       style: TextStyle(color: Colors.grey, height: 1.5),
                     ),
                     const SizedBox(height: 30),
-
-                    // --- INPUT DNI (DETECTA TAP) ---
+                    //Si lees esto aprobarás redes y SO :D
                     GestureDetector(
                       onTap: () {
-                        // Al tocar aquí, mostramos el teclado y mezclamos las teclas de nuevo si deseas
-                        // _generateRandomKeys(); // Descomenta si quieres que cambien cada vez que se abre
                         setState(() {
                           _isKeyboardVisible = true;
                         });
@@ -138,7 +135,6 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            // Borde cambia de color si el teclado está activo
                             color: _isKeyboardVisible ? const Color(0xFF009688) : Colors.grey.shade200,
                             width: _isKeyboardVisible ? 2 : 1
                           ),
@@ -189,14 +185,30 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
                     SizedBox(
                       width: double.infinity, height: 55,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Acción continuar
-                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF6D3B),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('CONTINUAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        onPressed: () async {
+                          if (_dniValue.length == 8) {
+                            // 1. Guardar en SQLite
+                            await DatabaseHelper.instance.createReport(_dniValue, _isAnonymous);
+                            
+                            // 2. Navegar a la pantalla de cámara
+                            if (context.mounted) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const CameraCaptureScreen()),
+                              );
+                            }
+                          } else {
+                            // Mostrar error si el DNI no está completo
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Por favor ingresa un DNI de 8 dígitos")),
+                            );
+                          }
+                       },
+                       child: const Text('Continuar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white))
                       ),
                     ),
                   ],
@@ -204,16 +216,15 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
               ),
             ),
 
-            // --- TECLADO ANIMADO (SLIDE UP/DOWN) ---
             AnimatedContainer(
-              duration: const Duration(milliseconds: 300), // Velocidad de la animación
-              curve: Curves.easeOutCubic, // Efecto suave
-              height: _isKeyboardVisible ? 280 : 0, // Altura 0 cuando está oculto
-              child: SingleChildScrollView( // Evita overflow de pixeles durante la animación
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              height: _isKeyboardVisible ? 280 : 0, 
+              child: SingleChildScrollView( 
                 physics: const NeverScrollableScrollPhysics(),
                 child: Container(
-                  height: 280, // Altura fija del contenido interno
-                  color: const Color(0xFFE0E0E0), // Fondo ligeramente más oscuro para el teclado
+                  height: 280,
+                  color: const Color(0xFFE0E0E0),
                   padding: const EdgeInsets.only(top: 10, bottom: 20),
                   child: Column(
                     children: [
@@ -239,7 +250,7 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
     );
   }
 
-  // --- WIDGETS AUXILIARES DEL TECLADO ---
+ //Widgets
 
   Widget _buildKeyRow(int start, int end) {
     return Expanded(
@@ -253,13 +264,13 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
   Widget _buildKeyButton(String val) {
     return Material(
       color: Colors.white,
-      elevation: 2, // Sombra suave
+      elevation: 2,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: () => _onKeyPressed(val),
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          width: MediaQuery.of(context).size.width / 3.5, // Ancho responsivo
+          width: MediaQuery.of(context).size.width / 3.5, 
           height: 50,
           alignment: Alignment.center,
           child: Text(val, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
@@ -270,7 +281,7 @@ class _ReportDniScreenState extends State<ReportDniScreen> {
 
   Widget _buildBackspaceButton() {
     return Material(
-      color: const Color(0xFFCFD8DC), // Color diferente para borrar
+      color: const Color(0xFFCFD8DC),
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: _onBackspace,
